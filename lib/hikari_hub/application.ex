@@ -12,6 +12,8 @@ defmodule HikariHub.Application do
         # Children for all targets
         # Starts a worker by calling: HikariHub.Worker.start_link(arg)
         # {HikariHub.Worker, arg},
+        #{HikariHub.LightsManager, name: HikariHub.LightsManager},
+        {Plug.Cowboy, scheme: :http, plug: NetworkGpio.Http, options: [port: 80]},
       ] ++ children(Nerves.Runtime.mix_target())
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -34,6 +36,8 @@ defmodule HikariHub.Application do
       # Children for all targets except host
       # Starts a worker by calling: HikariHub.Worker.start_link(arg)
       # {HikariHub.Worker, arg},
+      #{HikariHub.LightsManager, name: HikariHub.LightsManager},
+      #{Plug.Cowboy, scheme: :http, plug: NetworkGpio.Http, options: [port: 80]},
     ]
   end
 end
