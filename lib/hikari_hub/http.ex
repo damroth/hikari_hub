@@ -13,7 +13,7 @@ defmodule NetworkGpio.Http do
   end
 
   get "/disable" do
-    HikariHub.LightsManager.enable()
+    HikariHub.LightsManager.disable()
     send_resp(conn, 200, "Lights disabled")
   end
 

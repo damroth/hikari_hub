@@ -8,16 +8,17 @@ defmodule HikariHub.LightsManager do
   require Logger
   alias Circuits.GPIO
 
-  def start_link(state \\ []) do
+  def start_link(opts) do
     Logger.info("Starting LightsManager...")  # Log start
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
-  def init(state) do ### PROBLEM ZAPEWNE LEZY W STANIE COS PRZEKAZUJE LISTE
-  # A MY MAMY MAPE
-    Logger.info("Initializing LightsManager...")  # Log initialization
+  # Server Callbacks
+  @impl true
+  def init(:ok) do
+    Logger.info("Initializing LightsManager...")
     gpio_pins = Application.get_env(:hikari_hub, :gpio_pins)
-    Logger.info("GPIO Pins Configuration: #{inspect(gpio_pins)}")  # Log GPIO configuration
+    Logger.info("GPIO Pins Configuration: #{inspect(gpio_pins)}")
 
     gpio_map =
       gpio_pins
@@ -32,21 +33,27 @@ defmodule HikariHub.LightsManager do
 
           {:error, reason} ->
             Logger.error("Failed to open GPIO pin #{pin} for #{name}: #{reason}")
-            {name, nil}  # You might want to handle this differently
+            {name, nil}
         end
       end)
       |> Enum.into(%{})
 
-    Logger.info("GPIO mapping completed: #{inspect(gpio_map)}")  # Log successful mapping
+    Logger.info("GPIO mapping completed: #{inspect(gpio_map)}")
 
-    {:ok, Map.merge(state, %{gpios: gpio_map})}
+    {:ok, %{gpio_map: gpio_map}}
   end
 
-  def handle_cast(:enable, %{gpios: gpios} = state) do
-    Logger.info("inside handle cast, Enabling Lights...")
-    Logger.info(" state: #{inspect(state)}")
+  @impl true
+  def handle_cast({:initialize_gpio, gpio_map}, state) do
+    # Update the state with the new gpio_map
+    new_state = Map.put(state, :gpio_map, gpio_map)
+    {:noreply, new_state}
+  end
 
-    case GPIO.write(gpios[:lights], 1) do
+  @impl true
+  def handle_cast(:enable, state) do
+    Logger.info("Enabling Lights...")
+    case GPIO.write(state.gpio_map[:lights], 1) do
       :ok ->
         Logger.info("Lights enabled.")
     end
@@ -54,10 +61,10 @@ defmodule HikariHub.LightsManager do
     {:noreply, state}
   end
 
-  def handle_cast(:disable, %{gpios: gpios} = state) do
+  @impl true
+  def handle_cast(:disable, state) do
     Logger.info("Disabling Lights...")
-
-    case GPIO.write(gpios[:lights], 0) do
+    case GPIO.write(state.gpio_map[:lights], 0) do
       :ok ->
         Logger.info("Lights disabled.")
     end
@@ -66,13 +73,10 @@ defmodule HikariHub.LightsManager do
   end
 
   def enable() do
-    Logger.info("inside enable function")
-    GPIO.write(18, 1)
     GenServer.cast(__MODULE__, :enable)
   end
 
   def disable() do
-    Logger.info("inside enable function")
     GenServer.cast(__MODULE__, :disable)
   end
 end
