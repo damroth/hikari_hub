@@ -16,11 +16,23 @@ defmodule HikariHub.Scheduler do
     end
   end
 
+  def schedule_daily_update do
+    new_job()
+    |> Quantum.Job.set_name(:daily_update)
+    |> Quantum.Job.set_schedule(Crontab.CronExpression.Parser.parse!("5 0 * * *"))
+    |> Quantum.Job.set_task(fn -> HikariHub.Scheduler.schedule_light_switching(51.1079, 17.0385) end)
+    |> Quantum.Job.set_timezone(@timezone)
+    |> add_job()
+  end
+
+  # for debugging purposes
+  @spec manual_schedule(:sunrise | :sunset, binary()) :: :ok
   def manual_schedule(atom, time) do
     schedule_task(atom, time)
   end
 
   defp schedule_task(:sunrise, time) do
+    delete_job(:sunrise)
     new_job()
     |> Quantum.Job.set_name(:sunrise)
     |> Quantum.Job.set_schedule(Crontab.CronExpression.Parser.parse!(time_to_cron(time)))
@@ -30,6 +42,7 @@ defmodule HikariHub.Scheduler do
   end
 
   defp schedule_task(:sunset, time) do
+    delete_job(:sunset)
     new_job()
       |> Quantum.Job.set_name(:sunet)
       |> Quantum.Job.set_schedule(Crontab.CronExpression.Parser.parse!(time_to_cron(time)))
