@@ -61,6 +61,11 @@ defmodule HikariHub.MixProject do
       # Cowboy2
       {:plug_cowboy, "~> 2.0"},
 
+      # SunriseSunset module
+      {:httpoison, "~> 1.8"},
+      {:jason, "~> 1.2"},
+      {:quantum, "~> 3.0"},
+      {:tzdata, "~> 1.1"},
 
       # Dependencies for specific targets
       # NOTE: It's generally low risk and recommended to follow minor version

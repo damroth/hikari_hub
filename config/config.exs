@@ -20,8 +20,16 @@ config :logger, level: :debug
 
 config :nerves, source_date_epoch: "1728495408"
 
+# https://github.com/lau/tzdata
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
 config :hikari_hub, :gpio_pins,
   lights: [pin: 18, direction: :output]
+
+config :hikari_hub, HikariHub.Scheduler,
+  timezone: "Etc/UTC",
+  jobs: []
+
 if Mix.target() == :host do
   import_config "host.exs"
 else
