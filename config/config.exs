@@ -13,10 +13,22 @@ Application.start(:nerves_bootstrap)
 
 config :nerves, :firmware, rootfs_overlay: "rootfs_overlay"
 
+config :logger, level: :debug
+
 # Set the SOURCE_DATE_EPOCH date for reproducible builds.
 # See https://reproducible-builds.org/docs/source-date-epoch/ for more information
 
 config :nerves, source_date_epoch: "1728495408"
+
+# https://github.com/lau/tzdata
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
+config :hikari_hub, :gpio_pins,
+  lights: [pin: 18, direction: :output]
+
+config :hikari_hub, HikariHub.Scheduler,
+  timezone: "Etc/UTC",
+  jobs: []
 
 if Mix.target() == :host do
   import_config "host.exs"

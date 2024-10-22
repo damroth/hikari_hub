@@ -55,6 +55,18 @@ defmodule HikariHub.MixProject do
       # Dependencies for all targets except :host
       {:nerves_pack, "~> 0.7.1", targets: @all_targets},
 
+      # GPIO
+      {:circuits_gpio, "~> 2.1"},
+
+      # Cowboy2
+      {:plug_cowboy, "~> 2.0"},
+
+      # SunriseSunset module
+      {:httpoison, "~> 1.8"},
+      {:jason, "~> 1.2"},
+      {:quantum, "~> 3.0"},
+      {:tzdata, "~> 1.1"},
+
       # Dependencies for specific targets
       # NOTE: It's generally low risk and recommended to follow minor version
       # bumps to Nerves systems. Since these include Linux kernel and Erlang
