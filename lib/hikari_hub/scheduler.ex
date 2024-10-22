@@ -9,10 +9,24 @@ defmodule HikariHub.Scheduler do
   def schedule_light_switching(lat, lng) do
     case HikariHub.SunriseSunset.fetch_times(lat, lng) do
       {:ok, %{"sunrise" => sunrise, "sunset" => sunset}} ->
+        # check whether we have to enable lights immediately
+        determine_light_state(sunrise, sunset)
         schedule_task(:sunrise, sunrise)
         schedule_task(:sunset, sunset)
       {:error, reason} ->
         Logger.error("Failed to fetch sunrise/sunset times: #{reason}")
+    end
+  end
+
+  defp determine_light_state(sunrise, sunset) do
+    {:ok, current_time} = DateTime.now(@timezone)
+    {:ok, sunrise_time, _} = DateTime.from_iso8601(sunrise)
+    {:ok, sunset_time, _} = DateTime.from_iso8601(sunset)
+
+    if DateTime.compare(current_time, sunrise_time) == :lt or DateTime.compare(current_time, sunset_time) == :gt do
+      HikariHub.LightsManager.disable()
+    else
+      HikariHub.LightsManager.enable()
     end
   end
 
