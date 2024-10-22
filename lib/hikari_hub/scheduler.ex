@@ -24,9 +24,9 @@ defmodule HikariHub.Scheduler do
     {:ok, sunset_time, _} = DateTime.from_iso8601(sunset)
 
     if DateTime.compare(current_time, sunrise_time) == :lt or DateTime.compare(current_time, sunset_time) == :gt do
-      HikariHub.LightsManager.disable()
-    else
       HikariHub.LightsManager.enable()
+    else
+      HikariHub.LightsManager.disable()
     end
   end
 
