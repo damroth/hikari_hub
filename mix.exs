@@ -66,6 +66,7 @@ defmodule HikariHub.MixProject do
       {:jason, "~> 1.2"},
       {:quantum, "~> 3.0"},
       {:tzdata, "~> 1.1"},
+      {:nerves_time, "~> 0.4.2"},
 
       # Dependencies for specific targets
       # NOTE: It's generally low risk and recommended to follow minor version
