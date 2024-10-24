@@ -32,7 +32,6 @@ config :hikari_hub, HikariHub.Scheduler,
   timezone: "Etc/UTC",
   jobs: []
 
-config :nerves_time, await_initialization_timeout: :timer.seconds(5)
 config :nerves_time, :servers, [
   "0.pool.ntp.org",
   "1.pool.ntp.org",
