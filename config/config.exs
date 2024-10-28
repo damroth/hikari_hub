@@ -32,6 +32,10 @@ config :hikari_hub, HikariHub.Scheduler,
   timezone: "Etc/UTC",
   jobs: []
 
+config :hikari_hub, :scheduler,
+  # Only UTC timezone is supported for now
+  static_sunrise_time: "2030-01-01T02:00:00+00:00"
+
 config :nerves_time, :servers, [
   "0.pool.ntp.org",
   "1.pool.ntp.org",

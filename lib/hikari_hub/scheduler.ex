@@ -47,6 +47,14 @@ defmodule HikariHub.Scheduler do
   end
 
   defp schedule_task(:sunrise, time) do
+    static_time = Application.get_env(:hikari_hub, :scheduler)[:static_sunrise_time]
+    time = if static_time do
+      Logger.info("Static time is set, time will be overwritten to #{static_time}")
+      static_time
+    else
+      time
+    end
+
     Logger.info("Scheduling sunrise task at #{time}")
     delete_job(:sunrise)
     new_job()
