@@ -23,12 +23,25 @@ config :nerves, source_date_epoch: "1728495408"
 # https://github.com/lau/tzdata
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
+config :tzdata, :data_dir, "/tmp/tzdata"
+
 config :hikari_hub, :gpio_pins,
   lights: [pin: 18, direction: :output]
 
 config :hikari_hub, HikariHub.Scheduler,
   timezone: "Etc/UTC",
   jobs: []
+
+config :hikari_hub, :scheduler,
+  # Only UTC timezone is supported for now
+  static_sunrise_time: "2030-01-01T02:00:00+00:00"
+
+config :nerves_time, :servers, [
+  "0.pool.ntp.org",
+  "1.pool.ntp.org",
+  "2.pool.ntp.org",
+  "3.pool.ntp.org"
+]
 
 if Mix.target() == :host do
   import_config "host.exs"

@@ -31,6 +31,7 @@ defmodule HikariHub.Scheduler do
   end
 
   def schedule_daily_update do
+    Logger.info("Scheduling daily update at 00:05")
     new_job()
     |> Quantum.Job.set_name(:daily_update)
     |> Quantum.Job.set_schedule(Crontab.CronExpression.Parser.parse!("5 0 * * *"))
@@ -46,21 +47,31 @@ defmodule HikariHub.Scheduler do
   end
 
   defp schedule_task(:sunrise, time) do
+    static_time = Application.get_env(:hikari_hub, :scheduler)[:static_sunrise_time]
+    time = if static_time do
+      Logger.info("Static time is set, time will be overwritten to #{static_time}")
+      static_time
+    else
+      time
+    end
+
+    Logger.info("Scheduling sunrise task at #{time}")
     delete_job(:sunrise)
     new_job()
     |> Quantum.Job.set_name(:sunrise)
     |> Quantum.Job.set_schedule(Crontab.CronExpression.Parser.parse!(time_to_cron(time)))
-    |> Quantum.Job.set_task(fn -> HikariHub.LightsManager.enable() end)
+    |> Quantum.Job.set_task(fn -> HikariHub.LightsManager.disable() end)
     |> Quantum.Job.set_timezone(@timezone)
     |> add_job()
   end
 
   defp schedule_task(:sunset, time) do
+    Logger.info("Scheduling sunset task at #{time}")
     delete_job(:sunset)
     new_job()
       |> Quantum.Job.set_name(:sunet)
       |> Quantum.Job.set_schedule(Crontab.CronExpression.Parser.parse!(time_to_cron(time)))
-      |> Quantum.Job.set_task(fn -> HikariHub.LightsManager.disable() end)
+      |> Quantum.Job.set_task(fn -> HikariHub.LightsManager.enable() end)
       |> Quantum.Job.set_timezone(@timezone)
       |> add_job()
   end
