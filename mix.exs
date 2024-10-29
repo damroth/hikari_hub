@@ -2,7 +2,7 @@ defmodule HikariHub.MixProject do
   use Mix.Project
 
   @app :hikari_hub
-  @version "0.1.0"
+  @version "0.3.0"
   @all_targets [
     :rpi,
     :rpi0,
