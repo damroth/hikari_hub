@@ -50,10 +50,11 @@ defmodule HikariHub.LightsManager do
     {:noreply, new_state}
   end
 
+  # FIXME: state select should be configurable (whether is low or high)
   @impl true
   def handle_cast(:enable, state) do
     Logger.info("Enabling Lights...")
-    case GPIO.write(state.gpio_map[:lights], 1) do
+    case GPIO.write(state.gpio_map[:lights], 0) do
       :ok ->
         Logger.info("Lights enabled.")
     end
@@ -64,7 +65,7 @@ defmodule HikariHub.LightsManager do
   @impl true
   def handle_cast(:disable, state) do
     Logger.info("Disabling Lights...")
-    case GPIO.write(state.gpio_map[:lights], 0) do
+    case GPIO.write(state.gpio_map[:lights], 1) do
       :ok ->
         Logger.info("Lights disabled.")
     end
